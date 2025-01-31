@@ -1,6 +1,14 @@
 import numpy as np
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
+# mpa 
+
+import pandas as pd
+
+def import_data():
+    data = pd.read_csv("../data/census.csv")
+    print(data.head())
+
 
 def process_data(
     X, categorical_features=[], label=None, training=True, encoder=None, lb=None
@@ -75,3 +83,7 @@ def apply_label(inference):
         return ">50K"
     elif inference[0] == 0:
         return "<=50K"
+
+
+if __name__=="__main__":
+    import_data()
