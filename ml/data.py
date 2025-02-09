@@ -6,8 +6,8 @@ from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 import pandas as pd
 
 def import_data():
-    data = pd.read_csv("../data/census.csv")
-    print(data.head())
+    data = pd.read_csv("./data/census.csv")
+    return data
 
 
 def process_data(
@@ -83,7 +83,3 @@ def apply_label(inference):
         return ">50K"
     elif inference[0] == 0:
         return "<=50K"
-
-
-if __name__=="__main__":
-    import_data()

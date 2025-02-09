@@ -1,28 +1,48 @@
 import pytest
-# TODO: add necessary import
+import pandas as pd
+from ml.model import load_model, performance_on_categorical_slice, compute_model_metrics, inference
+from ml.data import process_data
 
-# TODO: implement the first test. Change the function name and input as needed
-def test_one():
-    """
-    # add description for the first test
-    """
-    # Your code here
-    pass
+# Load necessary components
+model = load_model("./model/model.pkl")
+encoder = load_model("./model/encoder.pkl")
+test_data = pd.read_csv("data/census.csv")  # Assuming test data is available
 
+# Define categorical features based on dataset
+categorical_features = ["workclass", "education", "marital-status", "occupation", "relationship", "race", "sex", "native-country"]
 
-# TODO: implement the second test. Change the function name and input as needed
-def test_two():
-    """
-    # add description for the second test
-    """
-    # Your code here
-    pass
+# Process test data to retrieve encoder and label binarizer
+X_test, y_test, encoder, lb = process_data(test_data, categorical_features, label="salary", training=False, encoder=encoder, lb=None)
 
+# Test model loading
+def test_model_loading():
+    """
+    Test if the model loads correctly.
+    """
+    assert model is not None, "Model should be loaded successfully"
 
-# TODO: implement the third test. Change the function name and input as needed
-def test_three():
+# Test model performance on a categorical slice
+def test_performance_on_categorical_slice():
     """
-    # add description for the third test
+    Test model performance on a categorical slice (education='Bachelors').
     """
-    # Your code here
-    pass
+    col = "education"
+    slice_value = "Bachelors"
+    slice_data = test_data[test_data[col] == slice_value]
+    X_slice, y_slice, _, lb = process_data(slice_data, categorical_features=categorical_features, label="salary", training=False, encoder=encoder, lb=None)
+    
+    preds = inference(model, X_slice)
+
+    p, r, fb = compute_model_metrics(y_slice, preds)
+    
+    assert p is not None, "Precision should not be None"
+    assert r is not None, "Recall should not be None"
+    assert fb is not None, "F-beta score should not be None"
+
+# Test data processing
+def test_data_processing():
+    """
+    Test if data processing works correctly and returns expected output shapes.
+    """
+    assert X_test.shape[0] == y_test.shape[0], "Feature and label arrays should have the same number of rows"
+    assert encoder is not None, "Encoder should not be None"
